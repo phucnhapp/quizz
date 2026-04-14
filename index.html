@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Thi Trắc Nghiệm Online</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --bg-color: #f8fafc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        #quiz-container {
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 { color: #1e293b; margin-bottom: 1.5rem; font-size: 1.25rem; }
+
+        .option {
+            display: block;
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            text-align: left;
+            background: #fff;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .option:hover {
+            border-color: var(--primary-color);
+            background: #eff6ff;
+        }
+
+        .hidden { display: none !important; }
+
+        #result-area { text-align: center; }
+        
+        #result {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 1rem 0;
+        }
+
+        button.retry-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        ul { text-align: left; padding: 0; list-style: none; }
+        li { 
+            padding: 8px; 
+            border-bottom: 1px solid #eee; 
+            display: flex; 
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="quiz-container">
+        <div id="question-area">
+            <h2 id="question-text">Đang tải câu hỏi...</h2>
+            <div id="options-container">
+                </div>
+        </div>
+
+        <div id="result-area" class="hidden">
+            <h2>Kết Quả Của Bạn</h2>
+            <div id="result">0/0</div>
+            <button class="retry-btn" onclick="location.reload()">Làm lại bài thi</button>
+            <hr style="margin: 2rem 0; border: 0; border-top: 1px solid #eee;">
+            <div id="leaderboard-container">
+                </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
