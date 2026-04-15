@@ -51,7 +51,7 @@ function startQuiz() {
     document.getElementById("user-info-area").classList.add("hidden");
     document.getElementById("question-area").classList.remove("hidden");
 
-    fetch('data.json')
+    fetch('data.json?v=1.0.1')
         .then(res => res.json())
         .then(data => {
             quizData = shuffle(data);
