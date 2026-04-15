@@ -1,0 +1,27 @@
+[
+  {
+    "id": "Q001",
+    "question": "Trong JavaScript, từ khóa nào dùng để khai báo một biến không thể thay đổi giá trị?",
+    "options": ["var", "let", "const", "static"]
+  },
+  {
+    "id": "Q002",
+    "question": "Firebase Realtime Database lưu trữ dữ liệu dưới định dạng nào?",
+    "options": ["SQL", "XML", "JSON", "CSV"]
+  },
+  {
+    "id": "Q003",
+    "question": "Giao thức mặc định để truyền tải dữ liệu web là gì?",
+    "options": ["FTP", "HTTP", "SMTP", "SSH"]
+  },
+  {
+    "id": "Q004",
+    "question": "Đâu là một framework của ngôn ngữ lập trình Python?",
+    "options": ["Laravel", "Django", "Angular", "Spring Boot"]
+  },
+  {
+    "id": "Q005",
+    "question": "Thành phố nào được mệnh danh là 'Thành phố đáng sống nhất Việt Nam'?",
+    "options": ["Hà Nội", "TP. Hồ Chí Minh", "Đà Nẵng", "Cần Thơ"]
+  }
+]

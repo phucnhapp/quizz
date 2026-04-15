@@ -1,126 +1,141 @@
-// Cấu hình Firebase của bạn
+// 1. Cấu hình Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBB4GqaDVw8k3mLjJA_szhIWmgjSlIgnQ8",
-  authDomain: "https://quizz-92f17-default-rtdb.asia-southeast1.firebasedatabase.app",
+  authDomain: "quizz-92f17.firebaseapp.com",
   projectId: "quizz-92f17",
-  storageBucket: "https://quizz-92f17-default-rtdb.asia-southeast1.firebasedatabase.app",
+  storageBucket: "quizz-92f17.appspot.com",
   databaseURL: "https://quizz-92f17-default-rtdb.asia-southeast1.firebasedatabase.app",
   messagingSenderId: "19153769746",
-  appId: "1:19153769746:web:aff9dba03fc4daeac00fcb",
-  measurementId: "G-NJ1VZ5PL25"
+  appId: "1:19153769746:web:aff9dba03fc4daeac00fcb"
 };
 
-// Khởi tạo Firebase
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
-       
 }
-self.FIREBASE_APPCHECK_DEBUG_TOKEN = false;
- const appCheck = firebase.appCheck();
-// Sử dụng reCAPTCHA v3
-// self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-appCheck.activate(
-    '6LfR37YsAAAAANt6q2YUB96iBm1s6X8Pn1jvdkgb', 
-    true // Tự động làm mới Token
-);
+
+// 2. App Check (reCAPTCHA v3)
+const appCheck = firebase.appCheck();
+appCheck.activate('6LfR37YsAAAAANt6q2YUB96iBm1s6X8Pn1jvdkgb', true);
 const database = firebase.database();
 
-// 1. Dữ liệu câu hỏi
-const quizData = [
-    {
-        question: "1 + 1 bằng mấy?",
-        options: ["1", "2", "3", "4"],
-        correct: 1
-    },
-    {
-        question: "Thủ đô của Việt Nam là gì?",
-        options: ["Hà Nội", "Đà Nẵng", "TP.HCM", "Huế"],
-        correct: 0
-    },
-    {
-        question: "Ngôn ngữ nào là linh hồn của web?",
-        options: ["Python", "PHP", "JavaScript", "Java"],
-        correct: 2
-    }
-];
-
+// 3. Khởi tạo biến
+let quizData = [];
 let currentQuestionIndex = 0;
-let score = 0;
+let userResponses = {}; // Lưu dưới dạng Object { "Q001": "Đáp án A" }
 
-// 2. Chờ HTML tải xong mới chạy code
+// Hàm trộn mảng
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
 window.onload = function() {
-    loadQuestion();
+    // Kiểm tra xem đã thi chưa
+    if (localStorage.getItem('quiz_completed') === 'false') {
+        document.getElementById("question-area").classList.add("hidden");
+        document.getElementById("already-done").classList.remove("hidden");
+        return;
+    }
+
+    // Nạp dữ liệu từ file JSON
+    fetch('data.json')
+        .then(res => res.json())
+        .then(data => {
+            quizData = shuffle(data); // Trộn thứ tự câu hỏi
+            // Trộn sẵn đáp án cho mỗi câu để không bị thay đổi khi quay lại
+            quizData.forEach(q => q.shuffledOptions = shuffle([...q.options]));
+            loadQuestion();
+        })
+        .catch(err => {
+            console.error("Lỗi nạp JSON:", err);
+            document.getElementById("question-text").innerText = "Lỗi nạp câu hỏi!";
+        });
 };
 
 function loadQuestion() {
-    const questionText = document.getElementById("question-text");
-    const optionsContainer = document.getElementById("options-container");
-
-    if (!questionText || !optionsContainer) return; // Kiểm tra lỗi thiếu ID trong HTML
-
     const currentQuiz = quizData[currentQuestionIndex];
     
+    // Cập nhật thanh tiến trình
+    const progress = ((currentQuestionIndex + 1) / quizData.length) * 100;
+    document.getElementById("progress-bar").style.width = progress + "%";
+
     // Hiển thị câu hỏi
-    questionText.innerText = `Câu ${currentQuestionIndex + 1}: ${currentQuiz.question}`;
+    document.getElementById("question-text").innerHTML = 
+        `<small style="color:var(--secondary-color)">Mã: ${currentQuiz.id}</small><br>` + 
+        `Câu ${currentQuestionIndex + 1}/${quizData.length}: ${currentQuiz.question}`;
     
-    // Xóa và tạo lại các nút chọn
-    optionsContainer.innerHTML = "";
-    currentQuiz.options.forEach((option, index) => {
-        const button = document.createElement("button");
-        button.innerText = option;
-        button.classList.add("option");
-        button.onclick = () => checkAnswer(index);
-        optionsContainer.appendChild(button);
-    });
-}
+    // Hiển thị đáp án
+    const container = document.getElementById("options-container");
+    container.innerHTML = "";
 
-function checkAnswer(selectedIndex) {
-    if (selectedIndex === quizData[currentQuestionIndex].correct) {
-        score++;
-    }
-
-    currentQuestionIndex++;
-
-    if (currentQuestionIndex < quizData.length) {
-        loadQuestion();
-    } else {
-        showResults();
-    }
-}
-
-function showResults() {
-    document.getElementById("question-area").classList.add("hidden");
-    const resultArea = document.getElementById("result-area");
-    resultArea.classList.remove("hidden");
-    
-    document.getElementById("result").innerText = `Điểm của bạn: ${score}/${quizData.length}`;
-
-    // Lưu điểm lên Firebase
-    const playerName = prompt("Nhập tên bạn để lưu vào bảng xếp hạng:");
-    if (playerName) {
-        database.ref('leaderboard').push({
-            name: playerName,
-            score: score,
-            time: new Date().toLocaleString()
-        }).then(() => {
-            alert("Đã lưu điểm!");
-            showLeaderboard();
-        });
-    }
-}
-
-function showLeaderboard() {
-    const leaderboardRef = database.ref('leaderboard').orderByChild('score').limitToLast(10);
-    leaderboardRef.once('value', (snapshot) => {
-        const data = snapshot.val();
-        let html = "<h3>Top 10 người giỏi nhất:</h3><ul>";
-        const list = [];
-        for (let key in data) list.push(data[key]);
+    currentQuiz.shuffledOptions.forEach(option => {
+        const btn = document.createElement("button");
+        btn.innerText = option;
+        btn.classList.add("option");
         
-        list.sort((a, b) => b.score - a.score).forEach(item => {
-            html += `<li><strong>${item.name}</strong>: ${item.score} điểm</li>`;
-        });
-        html += "</ul>";
-        document.getElementById("result-area").innerHTML += html;
+        // Nếu đã chọn rồi thì highlight lại
+        if (userResponses[currentQuiz.id] === option) {
+            btn.classList.add("selected");
+        }
+
+        btn.onclick = () => {
+            userResponses[currentQuiz.id] = option; // Lưu lựa chọn
+            // Reset màu các nút khác và highlight nút vừa chọn
+            document.querySelectorAll(".option").forEach(b => b.classList.remove("selected"));
+            btn.classList.add("selected");
+        };
+        container.appendChild(btn);
+    });
+
+    // Cập nhật các nút điều hướng
+    document.getElementById("prev-btn").disabled = (currentQuestionIndex === 0);
+    
+    if (currentQuestionIndex === quizData.length - 1) {
+        document.getElementById("next-btn").classList.add("hidden");
+        document.getElementById("submit-btn").classList.remove("hidden");
+    } else {
+        document.getElementById("next-btn").classList.remove("hidden");
+        document.getElementById("submit-btn").classList.add("hidden");
+    }
+}
+
+function changeQuestion(step) {
+    currentQuestionIndex += step;
+    loadQuestion();
+}
+
+function confirmSubmit() {
+    const totalAns = Object.keys(userResponses).length;
+    let msg = `Bạn đã làm ${totalAns}/${quizData.length} câu. Bạn có chắc chắn muốn nộp bài?`;
+    
+    if (confirm(msg)) {
+        submitToFirebase();
+    }
+}
+
+function submitToFirebase() {
+    const playerName = prompt("Nhập họ tên đầy đủ để nộp bài:");
+    if (!playerName) return;
+
+    // Chuyển Object về mảng để lưu trữ chuyên nghiệp
+    const finalData = Object.keys(userResponses).map(key => ({
+        id: key,
+        answer: userResponses[key]
+    }));
+
+    database.ref('submissions').push({
+        user: playerName,
+        timestamp: new Date().toISOString(),
+        details: finalData
+    }).then(() => {
+        localStorage.setItem('quiz_completed', 'true'); // Khóa thi lại
+        document.getElementById("question-area").classList.add("hidden");
+        document.getElementById("result-area").classList.remove("hidden");
+    }).catch(err => {
+        alert("Lỗi nộp bài! Kiểm tra kết nối hoặc App Check.");
+        console.error(err);
     });
 }
