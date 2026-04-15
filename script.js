@@ -122,7 +122,7 @@ function submitToFirebase() {
     }).then(() => {
         // --- BỔ SUNG Ở ĐÂY ---
         // Ngắt kết nối thực thể ngay sau khi dữ liệu đã được gửi đi thành công
-        database.goOffline(); 
+        // database.goOffline(); 
         // ---------------------
 
         localStorage.setItem('quiz_completed', 'true');
