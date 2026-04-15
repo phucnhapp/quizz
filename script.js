@@ -15,7 +15,7 @@ if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
        
 }
-
+self.FIREBASE_APPCHECK_DEBUG_TOKEN = false;
  const appCheck = firebase.appCheck();
 // Sử dụng reCAPTCHA v3
 // self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
