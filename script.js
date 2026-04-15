@@ -15,10 +15,13 @@ if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
        
 }
+
  const appCheck = firebase.appCheck();
 // Sử dụng reCAPTCHA v3
+self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
 appCheck.activate(
     '6LfR37YsAAAAANt6q2YUB96iBm1s6X8Pn1jvdkgb', // Dán Site Key bạn vừa lấy từ Google reCAPTCHA vào đây
+    // '6LfR37YsAAAAALy62zFJEm38y9E0My_HAyNre8cY', // Dán Site Key bạn vừa lấy từ Google reCAPTCHA vào đây
     true // Tự động làm mới Token
 );
 const database = firebase.database();
