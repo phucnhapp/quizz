@@ -1,9 +1,9 @@
 // Cấu hình Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyBB4GqaDVw8k3mLjJA_szhIWmgjSlIgnQ8",
-    authDomain: "quizz-92f17.firebaseapp.com",
+    authDomain: "quizz-92f17-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "quizz-92f17",
-    storageBucket: "quizz-92f17.appspot.com",
+    storageBucket: "https://quizz-92f17-default-rtdb.asia-southeast1.firebasedatabase.app",
     databaseURL: "https://quizz-92f17-default-rtdb.asia-southeast1.firebasedatabase.app",
     messagingSenderId: "19153769746",
     appId: "1:19153769746:web:aff9dba03fc4daeac00fcb"
@@ -30,6 +30,7 @@ function shuffle(array) {
 
 window.onload = function() {
     if (localStorage.getItem('quiz_completed') === 'false') {
+        database.goOnline(); 
         document.getElementById("user-info-area").classList.add("hidden");
         document.getElementById("already-done").classList.remove("hidden");
     }
@@ -108,7 +109,7 @@ function confirmSubmit() {
     }
 }
 
-function submitToFirebase() {
+
     function submitToFirebase() {
     const details = Object.keys(userResponses).map(id => ({
         id: id,
@@ -122,7 +123,7 @@ function submitToFirebase() {
     }).then(() => {
         // --- BỔ SUNG Ở ĐÂY ---
         // Ngắt kết nối thực thể ngay sau khi dữ liệu đã được gửi đi thành công
-        // database.goOffline(); 
+        database.goOffline(); 
         // ---------------------
 
         localStorage.setItem('quiz_completed', 'true');
@@ -133,6 +134,7 @@ function submitToFirebase() {
         alert("Lỗi kết nối hoặc bảo mật! Vui lòng kiểm tra lại mạng.");
     });
 }
+// function submitToFirebase() {
     // const finalResponses = Object.keys(userResponses).map(id => ({
     //     id: id,
     //     answer: userResponses[id]
@@ -150,4 +152,4 @@ function submitToFirebase() {
     //     alert("Lỗi nộp bài!");
     //     console.error(err);
     // });
-}
+// }
