@@ -40,22 +40,26 @@ function startQuiz() {
     const name = document.getElementById("user-name").value.trim();
     const org = document.getElementById("user-org").value.trim();
     const phone = document.getElementById("user-phone").value.trim();
-
     if (!name || !org || !phone) {
         alert("Vui lòng nhập đầy đủ thông tin trước khi bắt đầu!");
         return;
     }
-
     userData = { name, org, phone };
     document.getElementById("user-info-area").classList.add("hidden");
     document.getElementById("question-area").classList.remove("hidden");
-
     fetch('data.json?v=1.0.1')
         .then(res => res.json())
         .then(data => {
-            quizData = shuffle(data);
-            quizData.forEach(q => q.shuffledOptions = shuffle([...q.options]));
+            let shuffledQuestions = shuffle(data);
+            quizData = shuffledQuestions.slice(0, 20);
+            quizData.forEach(q => {
+                q.shuffledOptions = shuffle([...q.options]);
+            });
             loadQuestion();
+        })
+        .catch(err => {
+            console.error("Lỗi tải dữ liệu:", err);
+            alert("Có lỗi xảy ra. Vui lòng báo lại quản trị viên và thử lại sau!");
         });
 }
 
