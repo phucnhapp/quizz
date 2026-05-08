@@ -16,85 +16,139 @@
             --bg-color: #f1f5f9;
             --white: #ffffff;
             --success-color: #059669;
+            --error-color: #e11d48;
         }
 
-        * { box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
-        header { background: var(--primary-color); color: white; padding: 1.5rem 1rem; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        #main-content { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        #quiz-container { background: var(--white); width: 100%; max-width: 600px; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
 
-        /* Input Styles */
-        .form-group { margin-bottom: 1rem; text-align: left; }
+        /* Header */
+        header { 
+            background: var(--primary-color); 
+            color: white; 
+            padding: 0.8rem 1rem; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+        }
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        .header-content img { height: 45px; width: auto; }
+        .header-content h2 { margin: 0; font-size: 1.4rem; }
+
+        #main-content { flex: 1; display: flex; justify-content: center; align-items: flex-start; padding: 20px; }
+        #quiz-container { background: var(--white); width: 100%; max-width: 650px; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+
+        /* Form */
+        .form-group { margin-bottom: 1.2rem; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #334155; }
-        .form-group input { width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; }
-        
+        .form-group input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; outline: none; }
+        .form-group input:focus { border-color: var(--primary-color); }
+
+        /* Timer UI */
+        .timer-wrapper { display: flex; justify-content: center; margin-bottom: 20px; }
+        #timer-container { 
+            background: #fff1f2; border: 2px solid #fda4af; color: var(--error-color); 
+            padding: 8px 20px; border-radius: 50px; display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .timer-label { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; }
+        #timer { font-size: 1.3rem; font-weight: 800; font-family: monospace; min-width: 65px; }
+
+        /* Quiz UI */
         .progress-container { width: 100%; background: #e2e8f0; border-radius: 10px; height: 8px; margin-bottom: 1.5rem; }
         #progress-bar { width: 0%; height: 100%; background: var(--primary-color); border-radius: 10px; transition: width 0.3s ease; }
         
-        .option { display: block; width: 100%; padding: 14px 18px; margin-bottom: 12px; text-align: left; background: var(--white); border: 2px solid #e2e8f0; border-radius: 10px; cursor: pointer; font-size: 1rem; }
+        .option { display: block; width: 100%; padding: 14px 18px; margin-bottom: 12px; text-align: left; background: var(--white); border: 2px solid #e2e8f0; border-radius: 10px; cursor: pointer; font-size: 1rem; transition: 0.2s; }
+        .option:hover { background: #f8fafc; }
         .option.selected { border-color: var(--primary-color); background: #eff6ff; font-weight: bold; }
 
-        .nav-controls { display: flex; justify-content: space-between; margin-top: 1.5rem; gap: 10px; }
-        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; }
-        .btn-primary { background: var(--primary-color); color: white; width: 100%; margin-top: 10px; }
+        .nav-controls { display: flex; justify-content: space-between; margin-top: 1.5rem; gap: 15px; }
+        .btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; min-width: 110px; }
+        .btn-primary { background: var(--primary-color); color: white; width: 100%; }
         .btn-secondary { background: var(--secondary-color); color: white; }
         .btn-success { background: var(--success-color); color: white; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Block UI */
+        #block-ui { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.6); z-index: 9999; 
+            display: flex; justify-content: center; align-items: center; color: white; flex-direction: column; 
+        }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color); border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="header-content">
-            <img src="logo.png" alt="Logo" style="height: 40px; margin-bottom: -8px;">
-            <h2>Cuộc thi chuyển đổi số</h2>
+<header>
+    <div class="header-content">
+        <img src="logo.png" alt="Logo">
+        <h2>Chuyển đổi số Hòa Vang</h2>
+    </div>
+</header>
+
+<div id="main-content">
+    <div id="quiz-container">
+        <div id="user-info-area">
+            <h2 style="text-align: center; margin-top: 0;">Thông Tin Thí Sinh</h2>
+            <div class="form-group">
+                <label>Họ và Tên:</label>
+                <input type="text" id="user-name" placeholder="Nguyễn Văn A">
+            </div>
+            <div class="form-group">
+                <label>Đơn vị/Địa chỉ:</label>
+                <input type="text" id="user-org" placeholder="Tổ 20">
+            </div>
+            <div class="form-group">
+                <label>Số điện thoại:</label>
+                <input type="tel" id="user-phone" placeholder="0905xxxxxx">
+            </div>
+            <button class="btn btn-primary" onclick="startQuiz()">BẮT ĐẦU THI</button>
         </div>
-    </header>
 
-    <div id="main-content">
-        <div id="quiz-container">
-            <div id="user-info-area">
-                <h2 style="text-align: center;">Thông Tin Thí Sinh</h2>
-                <div class="form-group">
-                    <label>Họ và Tên:</label>
-                    <input type="text" id="user-name" placeholder="Nguyễn Văn A">
-                </div>
-                <div class="form-group">
-                    <label>Đơn vị công tác:</label>
-                    <input type="text" id="user-org" placeholder="Phòng Kỹ thuật">
-                </div>
-                <div class="form-group">
-                    <label>Số điện thoại:</label>
-                    <input type="tel" id="user-phone" placeholder="0905xxxxxx">
-                </div>
-                <button class="btn btn-primary" onclick="startQuiz()">Bắt đầu thi</button>
-            </div>
+        <div id="already-done" class="hidden" style="text-align: center; padding: 20px;">
+            <h2 style="color: var(--error-color);">Bạn đã hoàn thành bài thi!</h2>
+            <p>Mỗi thí sinh chỉ được tham gia dự thi 01 lần duy nhất.</p>
+        </div>
 
-            <div id="already-done" class="hidden" style="text-align: center;">
-                <h2 style="color: #e11d48;">Bạn đã hoàn thành bài thi!</h2>
-                <p>Mỗi thí sinh chỉ được tham gia dự thi 01 lần duy nhất.</p>
-            </div>
-
-            <div id="question-area" class="hidden">
-                <div class="progress-container"><div id="progress-bar"></div></div>
-                <h2 id="question-text">Đang tải câu hỏi...</h2>
-                <div id="options-container"></div>
-                
-                <div class="nav-controls">
-                    <button id="prev-btn" class="btn btn-secondary" onclick="changeQuestion(-1)">Trước</button>
-                    <button id="next-btn" class="btn btn-secondary" onclick="changeQuestion(1)">Tiếp theo</button>
-                    <button id="submit-btn" class="btn btn-success hidden" onclick="confirmSubmit()">Nộp bài</button>
+        <div id="question-area" class="hidden">
+            <div class="timer-wrapper">
+                <div id="timer-container">
+                    <span class="timer-label">Thời gian</span>
+                    <span id="timer">05:00</span>
                 </div>
             </div>
-
-            <div id="result-area" class="hidden" style="text-align: center;">
-                <h2 style="color: var(--success-color);">Nộp bài thành công!</h2>
-                <p>Kết quả của bạn đã được ghi nhận!</p>
+            
+            <div class="progress-container"><div id="progress-bar"></div></div>
+            <h3 id="question-text">Đang tải câu hỏi...</h3>
+            <div id="options-container"></div>
+            
+            <div class="nav-controls">
+                <button id="prev-btn" class="btn btn-secondary" onclick="changeQuestion(-1)">Trước</button>
+                <button id="next-btn" class="btn btn-secondary" onclick="changeQuestion(1)">Tiếp theo</button>
+                <button id="submit-btn" class="btn btn-success hidden" onclick="confirmSubmit()">Nộp bài</button>
             </div>
+        </div>
+
+        <div id="result-area" class="hidden" style="text-align: center; padding: 30px;">
+            <div style="font-size: 50px; color: var(--success-color);">✓</div>
+            <h2 style="color: var(--success-color);">Nộp bài thành công!</h2>
+            <p>Kết quả của bạn đã được hệ thống ghi nhận. Cảm ơn bạn đã tham gia!</p>
         </div>
     </div>
+</div>
 
-    <script src="script.js?v=1.0.3"></script>
+<div id="block-ui" class="hidden">
+    <div class="spinner"></div>
+    <p style="margin-top: 15px; font-weight: 600;">Đang gửi bài làm, vui lòng đợi...</p>
+</div>
+
+<script src="script.js?v=1.0.4"></script>
 </body>
 </html>
