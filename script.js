@@ -18,7 +18,7 @@ const database = firebase.database();
 let quizData = [];
 let currentQuestionIndex = 0;
 let userResponses = {}; 
-let userData = {}; // Lưu thông tin thí sinh
+let userData = {}; 
 
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
@@ -47,8 +47,6 @@ function startQuiz() {
     }
 
     userData = { name, org, phone };
-
-    // Ẩn màn nhập liệu, hiện màn thi
     document.getElementById("user-info-area").classList.add("hidden");
     document.getElementById("question-area").classList.remove("hidden");
 
@@ -109,7 +107,6 @@ function confirmSubmit() {
     }
 }
 
-
     function submitToFirebase() {
     const details = Object.keys(userResponses).map(id => ({
         id: id,
@@ -121,11 +118,7 @@ function confirmSubmit() {
         timestamp: new Date().toISOString(),
         details: details
     }).then(() => {
-        // --- BỔ SUNG Ở ĐÂY ---
-        // Ngắt kết nối thực thể ngay sau khi dữ liệu đã được gửi đi thành công
         database.goOffline(); 
-        // ---------------------
-
         localStorage.setItem('quiz_completed', 'true');
         document.getElementById("question-area").classList.add("hidden");
         document.getElementById("result-area").classList.remove("hidden");
@@ -134,22 +127,3 @@ function confirmSubmit() {
         alert("Lỗi kết nối hoặc bảo mật! Vui lòng kiểm tra lại mạng.");
     });
 }
-// function submitToFirebase() {
-    // const finalResponses = Object.keys(userResponses).map(id => ({
-    //     id: id,
-    //     answer: userResponses[id]
-    // }));
-
-    // database.ref('submissions').push({
-    //     ...userData,
-    //     timestamp: new Date().toISOString(),
-    //     details: finalResponses
-    // }).then(() => {
-    //     localStorage.setItem('quiz_completed', 'true');
-    //     document.getElementById("question-area").classList.add("hidden");
-    //     document.getElementById("result-area").classList.remove("hidden");
-    // }).catch(err => {
-    //     alert("Lỗi nộp bài!");
-    //     console.error(err);
-    // });
-// }
