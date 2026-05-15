@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Thi Trắc Nghiệm Online</title>
+    <title>Cuộc thi chuyển đổi số</title>
     
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-check-compat.js"></script>
@@ -20,50 +20,35 @@
         }
 
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: var(--bg-color); margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        body { background-repeat: no-repeat; background-image: url(trongdong.jpg); background-size: cover; background-color: var(--bg-color); margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
 
-        /* Header */
-        header { 
-            background: var(--primary-color); 
-            color: white; 
-            padding: 0.8rem 1rem; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
-        }
-        .header-content {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-        }
-        .header-content img { height: 45px; width: auto; }
-        .header-content h2 { margin: 0; font-size: 1.4rem; }
+        header { background: var(--primary-color); line-height: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; }
+        .banner-img { width: 100%; height: auto; display: block; object-fit: cover; }
 
         #main-content { flex: 1; display: flex; justify-content: center; align-items: flex-start; padding: 20px; }
         #quiz-container { background: var(--white); width: 100%; max-width: 650px; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
 
-        /* Form */
         .form-group { margin-bottom: 1.2rem; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #334155; }
         .form-group input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1rem; outline: none; }
         .form-group input:focus { border-color: var(--primary-color); }
 
-        /* Timer UI */
         .timer-wrapper { display: flex; justify-content: center; margin-bottom: 20px; }
         #timer-container { 
             background: #fff1f2; border: 2px solid #fda4af; color: var(--error-color); 
             padding: 8px 20px; border-radius: 50px; display: flex; align-items: center; gap: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-        .timer-label { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; }
         #timer { font-size: 1.3rem; font-weight: 800; font-family: monospace; min-width: 65px; }
 
-        /* Quiz UI */
         .progress-container { width: 100%; background: #e2e8f0; border-radius: 10px; height: 8px; margin-bottom: 1.5rem; }
         #progress-bar { width: 0%; height: 100%; background: var(--primary-color); border-radius: 10px; transition: width 0.3s ease; }
         
         .option { display: block; width: 100%; padding: 14px 18px; margin-bottom: 12px; text-align: left; background: var(--white); border: 2px solid #e2e8f0; border-radius: 10px; cursor: pointer; font-size: 1rem; transition: 0.2s; }
         .option:hover { background: #f8fafc; }
         .option.selected { border-color: var(--primary-color); background: #eff6ff; font-weight: bold; }
+
+        #essay-input { width: 100%; height: 150px; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; resize: none; font-size: 1rem; }
+        #word-count { text-align: right; font-size: 0.85rem; color: var(--secondary-color); margin-top: 5px; }
 
         .nav-controls { display: flex; justify-content: space-between; margin-top: 1.5rem; gap: 15px; }
         .btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s; min-width: 110px; }
@@ -72,12 +57,7 @@
         .btn-success { background: var(--success-color); color: white; }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* Block UI */
-        #block-ui { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.6); z-index: 9999; 
-            display: flex; justify-content: center; align-items: center; color: white; flex-direction: column; 
-        }
+        #block-ui { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; display: flex; justify-content: center; align-items: center; color: white; flex-direction: column; }
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color); border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
@@ -87,10 +67,7 @@
 <body>
 
 <header>
-    <div class="header-content">
-        <img src="logo.png" alt="Logo">
-        <h2>Chuyển đổi số Hòa Vang</h2>
-    </div>
+    <img src="banner.jpg" alt="Banner Chuyển đổi số" class="banner-img">
 </header>
 
 <div id="main-content">
@@ -99,15 +76,15 @@
             <h2 style="text-align: center; margin-top: 0;">Thông Tin Thí Sinh</h2>
             <div class="form-group">
                 <label>Họ và Tên:</label>
-                <input type="text" id="user-name" placeholder="Nguyễn Văn A">
+                <input type="text" id="user-name" placeholder="Nhập họ tên người dự thi...">
             </div>
             <div class="form-group">
                 <label>Đơn vị/Địa chỉ:</label>
-                <input type="text" id="user-org" placeholder="Tổ 20">
+                <input type="text" id="user-org" placeholder="Nhập Nơi công tác/Địa chỉ.....">
             </div>
             <div class="form-group">
                 <label>Số điện thoại:</label>
-                <input type="tel" id="user-phone" placeholder="0905xxxxxx">
+                <input type="tel" id="user-phone" placeholder="Nhập số điện thoại...">
             </div>
             <button class="btn btn-primary" onclick="startQuiz()">BẮT ĐẦU THI</button>
         </div>
@@ -121,13 +98,22 @@
             <div class="timer-wrapper">
                 <div id="timer-container">
                     <span class="timer-label">Thời gian</span>
-                    <span id="timer">05:00</span>
+                    <span id="timer">--:--</span>
                 </div>
             </div>
             
             <div class="progress-container"><div id="progress-bar"></div></div>
             <h3 id="question-text">Đang tải câu hỏi...</h3>
+            
             <div id="options-container"></div>
+
+            <div id="essay-container" class="hidden">
+                <label style="display: block; margin-bottom: 10px; font-weight: bold; color: var(--primary-color);">
+                    Anh/chị có sáng kiến gì về khoa học công nghệ, đổi mới sáng tạo và có thể áp dụng tại địa phương, cơ quan không? Nếu có hãy điền vào đây.
+                </label>
+                <textarea id="essay-input" placeholder="Nhập câu trả lời của bạn (tối đa 100 từ)"></textarea>
+                <div id="word-count">Số từ: 0/100</div>
+            </div>
             
             <div class="nav-controls">
                 <button id="prev-btn" class="btn btn-secondary" onclick="changeQuestion(-1)">Trước</button>
@@ -149,6 +135,6 @@
     <p style="margin-top: 15px; font-weight: 600;">Đang gửi bài làm, vui lòng đợi...</p>
 </div>
 
-<script src="script.js?v=1.0.5"></script>
+<script src="script.js?v=1.0.7"></script>
 </body>
 </html>
