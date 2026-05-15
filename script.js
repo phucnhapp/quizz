@@ -103,7 +103,7 @@ function startQuiz() {
     
     startTimer();
 
-    fetch('data.json?v=1.0.1')
+    fetch('data.json?v=1.0.2')
         .then(res => res.json())
         .then(data => {
             let shuffledQuestions = shuffle(data);
