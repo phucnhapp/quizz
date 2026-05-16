@@ -175,8 +175,56 @@ function confirmSubmit() {
     const answeredCount = Object.keys(userResponses).length;
     if (confirm(`Bạn đã làm ${answeredCount}/20 câu trắc nghiệm. Chắc chắn nộp bài?`)) {
         submitToFirebase();
+        // submitToPHP();
     }
 }
+function submitToPHP() {
+    clearInterval(timerInterval);
+    endTime = new Date();
+
+    document.getElementById("block-ui").classList.remove("hidden");
+
+    const details = Object.keys(userResponses).map(id => ({
+        id: id,
+        answer: userResponses[id]
+    }));
+
+    // Chuẩn bị object dữ liệu
+    const payload = {
+        ...userData,
+        start_time: startTime.toISOString().slice(0, 19).replace('T', ' '), // Định dạng lại cho MySQL
+        end_time: endTime.toISOString().slice(0, 19).replace('T', ' '),
+        total_quiz_time_ms: Math.floor(totalQuizTimeMs),
+        details: details,
+        essay_answer: essayResponse 
+    };
+
+    // Gửi dữ liệu tới PHP
+    fetch('submit.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.status === 'success') {
+            localStorage.setItem('quiz_completed', 'true');
+            document.getElementById("block-ui").classList.add("hidden");
+            document.getElementById("question-area").classList.add("hidden");
+            document.getElementById("result-area").classList.remove("hidden");
+        } else {
+            throw new Error(data.message);
+        }
+    })
+    .catch(err => {
+        console.error('Error:', err);
+        document.getElementById("block-ui").classList.add("hidden");
+        alert("Lỗi kết nối khi nộp bài! Vui lòng thử lại.");
+    });
+}
+
 
 function submitToFirebase() {
     clearInterval(timerInterval);

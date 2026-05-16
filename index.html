@@ -20,7 +20,20 @@
         }
 
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-repeat: no-repeat; background-image: url(trongdong.jpg); background-size: cover; background-color: var(--bg-color); margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        /* Chỉnh sửa phần background responsive theo tỷ lệ màn hình ở đây */
+        body { 
+            background-image: url('trongdong.jpg'); 
+            background-repeat: no-repeat; 
+            background-size: cover; 
+            background-position: center center;
+            background-attachment: fixed;
+            background-color: var(--bg-color); 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; 
+        }
 
         header { background: var(--primary-color); line-height: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; }
         .banner-img { width: 100%; height: auto; display: block; object-fit: cover; }
@@ -67,7 +80,7 @@
 <body>
 
 <header>
-    <img src="banner.jpg" alt="Banner Chuyển đổi số" class="banner-img">
+    <img src="banner2.jpg" alt="Banner Chuyển đổi số" class="banner-img">
 </header>
 
 <div id="main-content">
@@ -135,6 +148,6 @@
     <p style="margin-top: 15px; font-weight: 600;">Đang gửi bài làm, vui lòng đợi...</p>
 </div>
 
-<script src="script.js?v=1.0.7"></script>
+<script src="script.js?v=1.0.8"></script>
 </body>
 </html>
